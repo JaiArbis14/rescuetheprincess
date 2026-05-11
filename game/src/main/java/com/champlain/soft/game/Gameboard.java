@@ -2,6 +2,7 @@ package com.champlain.soft.game;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -36,6 +37,7 @@ public class Gameboard extends Application {
 
     private int playerRow = 1;
     private int playerCol = 1;
+    private boolean gameOver = false;
 
     @Override
     public void start(Stage stage) {
@@ -114,11 +116,20 @@ public class Gameboard extends Application {
     }
 
     private void movePlayer(int rowMove, int colMove) {
+        if (gameOver) {
+            return;
+        }
+
         int newRow = playerRow + rowMove;
         int newCol = playerCol + colMove;
 
         if (matrix[newRow][newCol] == CellType.WALL) {
             return;
+        }
+
+        if (matrix[newRow][newCol] == CellType.PRINCESS) {
+            gameOver = true;
+            showAlert("Victory", "You rescued the princess!");
         }
 
         matrix[playerRow][playerCol] = CellType.GRASS;
@@ -129,6 +140,14 @@ public class Gameboard extends Application {
         matrix[playerRow][playerCol] = CellType.PLAYER;
 
         drawBoard();
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private ImageView createImageView(Image image) {
