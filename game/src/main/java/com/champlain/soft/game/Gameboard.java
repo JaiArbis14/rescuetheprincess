@@ -9,6 +9,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.util.Random;
+
 public class Gameboard extends Application {
 
     private static final int SCENE_WIDTH = 800;
@@ -16,6 +18,8 @@ public class Gameboard extends Application {
 
     private static final int ROWS = 10;
     private static final int COLS = 10;
+
+    private static final int NUMBER_OF_BOMBS = 5;
 
     enum CellType {
         GRASS, PLAYER, PRINCESS, BOMB, WALL
@@ -28,6 +32,8 @@ public class Gameboard extends Application {
     private Image princessImage;
     private Image bombImage;
     private Image wallImage;
+
+    private Random random = new Random();
 
     @Override
     public void start(Stage stage) {
@@ -70,12 +76,49 @@ public class Gameboard extends Application {
             }
         }
 
-        matrix[0][0] = CellType.PLAYER;
-        matrix[9][9] = CellType.PRINCESS;
-        matrix[4][5] = CellType.BOMB;
+        addWalls();
 
-        matrix[1][1] = CellType.WALL;
-        matrix[1][2] = CellType.WALL;
+        matrix[1][1] = CellType.PLAYER;
+
+        placeRandom(CellType.PRINCESS);
+
+        for (int i = 0; i < NUMBER_OF_BOMBS; i++) {
+
+            placeRandom(CellType.BOMB);
+        }
+    }
+
+    private void addWalls() {
+
+        for (int r = 0; r < ROWS; r++) {
+
+            matrix[r][0] = CellType.WALL;
+
+            matrix[r][COLS - 1] = CellType.WALL;
+        }
+
+        for (int c = 0; c < COLS; c++) {
+
+            matrix[0][c] = CellType.WALL;
+
+            matrix[ROWS - 1][c] = CellType.WALL;
+        }
+    }
+
+    private void placeRandom(CellType type) {
+
+        int row;
+        int col;
+
+        do {
+
+            row = random.nextInt(ROWS);
+
+            col = random.nextInt(COLS);
+
+        } while (matrix[row][col] != CellType.GRASS || (row == 1 && col == 1));
+
+        matrix[row][col] = type;
     }
 
     private ImageView createImageView(Image image) {
@@ -83,6 +126,7 @@ public class Gameboard extends Application {
         ImageView imageView = new ImageView(image);
 
         imageView.setFitWidth(SCENE_WIDTH / COLS);
+
         imageView.setFitHeight(SCENE_HEIGHT / ROWS);
 
         return imageView;
@@ -127,6 +171,7 @@ public class Gameboard extends Application {
     }
 
     public static void main(String[] args) {
+
         launch();
     }
 }
