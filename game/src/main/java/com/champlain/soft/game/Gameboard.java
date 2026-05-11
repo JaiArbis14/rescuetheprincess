@@ -37,6 +37,7 @@ public class Gameboard extends Application {
 
     private int playerRow = 1;
     private int playerCol = 1;
+    private int lives = 3;
     private boolean gameOver = false;
 
     @Override
@@ -129,7 +130,12 @@ public class Gameboard extends Application {
 
         if (matrix[newRow][newCol] == CellType.PRINCESS) {
             gameOver = true;
-            showAlert("Victory", "You rescued the princess!");
+            showAlert(Alert.AlertType.INFORMATION, "Victory", "You rescued the princess!");
+        }
+
+        if (matrix[newRow][newCol] == CellType.BOMB) {
+            lives--;
+            showAlert(Alert.AlertType.WARNING, "Boom", "You hit a bomb! Lives left: " + lives);
         }
 
         matrix[playerRow][playerCol] = CellType.GRASS;
@@ -142,8 +148,8 @@ public class Gameboard extends Application {
         drawBoard();
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
