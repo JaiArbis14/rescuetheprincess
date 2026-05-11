@@ -130,14 +130,28 @@ public class Gameboard extends Application {
 
         if (matrix[newRow][newCol] == CellType.PRINCESS) {
             gameOver = true;
+            moveToNewPosition(newRow, newCol);
             showAlert(Alert.AlertType.INFORMATION, "Victory", "You rescued the princess!");
+            return;
         }
 
         if (matrix[newRow][newCol] == CellType.BOMB) {
             lives--;
-            showAlert(Alert.AlertType.WARNING, "Boom", "You hit a bomb! Lives left: " + lives);
+
+            if (lives == 0) {
+                gameOver = true;
+                moveToNewPosition(newRow, newCol);
+                showAlert(Alert.AlertType.ERROR, "Game Over", "You lost all your lives!");
+                return;
+            } else {
+                showAlert(Alert.AlertType.WARNING, "Boom", "You hit a bomb! Lives left: " + lives);
+            }
         }
 
+        moveToNewPosition(newRow, newCol);
+    }
+
+    private void moveToNewPosition(int newRow, int newCol) {
         matrix[playerRow][playerCol] = CellType.GRASS;
 
         playerRow = newRow;
